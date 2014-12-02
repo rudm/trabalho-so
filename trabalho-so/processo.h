@@ -18,16 +18,16 @@ public:
     explicit Processo(qint64 a_id = 0, qint32 a_tempoTotal = 10, qint32 a_tempoRestante = 10,
                       Status a_status = PRONTO, QObject *parent = 0);
 
-    qint64 getId() const;
+    qint64 id() const;
     void setId(const qint64 &value);
 
-    qint32 getTempoTotal() const;
+    qint32 tempoTotal() const;
     void setTempoTotal(const qint32 &value);
 
-    Status getStatus() const;
+    Status status() const;
     void setStatus(const Status &value);
 
-    qint32 getTempoRestante() const;
+    qint32 tempoRestante() const;
     void setTempoRestante(const qint32 &value);
 
 signals:

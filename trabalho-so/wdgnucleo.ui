@@ -22,7 +22,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QWidget" name="wdgProcesso" native="true"/>
+    <widget class="WdgProcesso" name="wdgProcesso" native="true"/>
    </item>
    <item>
     <widget class="QLabel" name="lblStatus">
@@ -33,6 +33,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>WdgProcesso</class>
+   <extends>QWidget</extends>
+   <header>wdgprocesso.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

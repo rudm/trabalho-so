@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     filaaptos.cpp \
     processador.cpp \
     wdgnucleo.cpp \
-    wdgprocesso.cpp
+    wdgprocesso.cpp \
+    updategui.cpp
 
 HEADERS  += mainwindow.h \
     processo.h \
@@ -30,7 +31,8 @@ HEADERS  += mainwindow.h \
     filaaptos.h \
     processador.h \
     wdgnucleo.h \
-    wdgprocesso.h
+    wdgprocesso.h \
+    updategui.h
 
 FORMS    += mainwindow.ui \
     wdgnucleo.ui \

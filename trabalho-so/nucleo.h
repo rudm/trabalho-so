@@ -35,6 +35,7 @@ public:
     void setStop(bool stop);
 
 signals:
+    void processamentoTerminado();
 
 public slots:
 

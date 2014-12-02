@@ -2,6 +2,7 @@
 #define WDGNUCLEO_H
 
 #include <QWidget>
+#include "wdgprocesso.h"
 
 namespace Ui {
 class WdgNucleo;
@@ -17,6 +18,8 @@ public:
     ~WdgNucleo();
 
     void refresh();
+
+    void setWdgProcesso(WdgProcesso *wdgProcesso);
 
     Nucleo *nucleo() const;
     void setNucleo(Nucleo *nucleo);

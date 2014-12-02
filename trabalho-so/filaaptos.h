@@ -20,6 +20,8 @@ public:
 
     bool isEmpty() const;
 
+    void limpar();
+
 signals:
 
 public slots:

@@ -6,13 +6,14 @@ Nucleo::Nucleo(qint64 a_id, Nucleo::Status a_status, QObject *parent)
     : QThread(parent)
     , m_id(a_id)
     , m_status(a_status)
+    , m_stop(false)
 {
 
 }
 
 void Nucleo::run()
 {
-    while (m_processo->getTempoRestante() > 0) {
+    while (m_processo->tempoRestante() > 0) {
         QMutex l_mutex;
 
         l_mutex.lock();
@@ -25,17 +26,17 @@ void Nucleo::run()
 
         qDebug() << QString("[NUCLEO(%1) - EXECUTANDO] Processo(%2) tem tempo restante %3/%4")
                     .arg(m_id)
-                    .arg(m_processo->getId())
-                    .arg(m_processo->getTempoRestante())
-                    .arg(m_processo->getTempoTotal());
-        m_processo->setTempoRestante(m_processo->getTempoRestante() - 1);
+                    .arg(m_processo->id())
+                    .arg(m_processo->tempoRestante())
+                    .arg(m_processo->tempoTotal());
+        m_processo->setTempoRestante(m_processo->tempoRestante() - 1);
         msleep(1000);
     }
 
     m_stop = false;
     m_status = DISPONIVEL;
 //    emit ProcessoChanged();
-//    emit processamentoTerminado();
+    emit processamentoTerminado();
 }
 
 bool Nucleo::isOcupado() const
@@ -76,6 +77,9 @@ Processo* Nucleo::processo() const
 void Nucleo::setProcesso(Processo *processo)
 {
     m_processo = processo;
+    m_status = OCUPADO;
+    if (!processo)
+        m_status = DISPONIVEL;
 }
 
 bool Nucleo::stop() const

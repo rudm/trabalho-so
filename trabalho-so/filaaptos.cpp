@@ -1,4 +1,5 @@
 #include "filaaptos.h"
+#include "processo.h"
 
 FilaAptos::FilaAptos(QObject *parent)
     : QObject(parent)
@@ -33,4 +34,10 @@ Processo* FilaAptos::takeFirst()
 bool FilaAptos::isEmpty() const
 {
     return m_fila.isEmpty();
+}
+
+void FilaAptos::limpar()
+{
+    while (!m_fila.isEmpty())
+        m_fila.takeFirst()->deleteLater();
 }

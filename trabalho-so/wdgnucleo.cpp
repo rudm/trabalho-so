@@ -2,6 +2,7 @@
 #include "ui_wdgnucleo.h"
 #include "nucleo.h"
 #include "util.h"
+#include <QDebug>
 
 WdgNucleo::WdgNucleo(QWidget *parent)
     : QWidget(parent)
@@ -24,6 +25,13 @@ void WdgNucleo::refresh()
     }
 }
 
+void WdgNucleo::setWdgProcesso(WdgProcesso *wdgProcesso)
+{
+    qDebug() << "antes" << ui->wdgProcesso;
+    ui->wdgProcesso = wdgProcesso;
+    qDebug() << "depois" << ui->wdgProcesso;
+}
+
 Nucleo *WdgNucleo::nucleo() const
 {
     return m_nucleo;
@@ -33,4 +41,3 @@ void WdgNucleo::setNucleo(Nucleo *nucleo)
 {
     m_nucleo = nucleo;
 }
-

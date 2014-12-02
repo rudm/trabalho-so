@@ -2,9 +2,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QMap>
+#include <QtCore>
 #include "processador.h"
 #include "filaaptos.h"
+#include "updategui.h"
 
 namespace Ui {
 class MainWindow;
@@ -36,6 +37,7 @@ private:
     Ui::MainWindow *ui;
     Processador m_processador;
     FilaAptos m_filaAptos;
+    UpdateGUI m_update;
     QMap<qint64, WdgNucleo*> m_widgetsNucleo;
     QMap<qint64, WdgProcesso*> m_widgetsProcesso;
 };

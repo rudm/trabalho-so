@@ -4,6 +4,8 @@
 #include "processo.h"
 #include "wdgnucleo.h"
 #include "wdgprocesso.h"
+#include "util.h"
+#include <QTime>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -13,7 +15,9 @@ MainWindow::MainWindow(QWidget *parent)
     initProcessador(ui->edtNucleos->value());
     initFilaAptos(ui->edtQtdProc->value());
 
-    // DOING: thread para refresh
+    m_update.setWdgNucleo(&m_widgetsNucleo);
+    m_update.setWdgProcesso(&m_widgetsProcesso);
+    m_update.start(QThread::HighestPriority);
 }
 
 MainWindow::~MainWindow()
@@ -45,80 +49,83 @@ void MainWindow::initProcessador(int qtdNucleos)
 
 void MainWindow::initFilaAptos(int qtdProcessos)
 {
-//    m_filaAptos.limpar();
+    m_filaAptos.limpar();
 
-//    while (!m_widgetsProcesso.isEmpty())
-//        m_widgetsProcesso.take(m_widgetsProcesso.keys().takeFirst())->deleteLater();
+    while (!m_widgetsProcesso.isEmpty())
+        m_widgetsProcesso.take(m_widgetsProcesso.keys().takeFirst())->deleteLater();
 
-//    for (int i = 0 ; i < n ; ++i) {
-//        uint l_seed = (i+1) * QTime::currentTime().msec();
-//        Processo::Prioridade l_prioridade = Processo::Prioridade(random(0, 3, l_seed));
-//        qint32 l_tempoTotal = random(20, 20, l_seed);
+    for (int i = 0 ; i < qtdProcessos ; ++i) {
+        uint l_seed = (i+1) * QTime::currentTime().msec();
+        qint32 l_tempoTotal = random(4, 20, l_seed);
 
-//        Processo* p = new Processo(i, l_prioridade, l_tempoTotal, l_tempoTotal, Processo::PRONTO, this);
-//        m_filaAptos.adicionarProcesso(p);
+        Processo* p = new Processo(i, l_tempoTotal, l_tempoTotal, Processo::PRONTO, this);
+        m_filaAptos.adicionarProcesso(p);
 
-//        UI_Processo* l_widget = new UI_Processo(this);
-//        l_widget->setId(QString::number(i));
-//        l_widget->setPrioridade(getTextForEnumProcessoPrioridade(l_prioridade));
-//        l_widget->setTempo(QString::number(l_tempoTotal) + "/" + QString::number(l_tempoTotal));
-//        l_widget->setEstado(getTextForEnumProcessoEstado(Processo::PRONTO));
+        WdgProcesso* l_widget = new WdgProcesso(this);
+        l_widget->setProcesso(p);
 
-//        m_widgetsProcesso[i] = l_widget;
+        m_widgetsProcesso[i] = l_widget;
 
-//        ui->scrAptosContents->layout()->addWidget(l_widget);
-//    }
+        ui->scrAptosContents->layout()->addWidget(l_widget);
+    }
 }
 
 void MainWindow::initEscalonador()
 {
+    Nucleo* nucleo = m_processador.getNucleoDisponivel();
+
+    Processo* processo = m_filaAptos.takeFirst();
+
+    m_widgetsNucleo[nucleo->id()]->setWdgProcesso(m_widgetsProcesso[processo->id()]);
+
 //    QEventLoop l_loop;
 
 //    for (int i = 0 ; i < m_processador.nucleos().size() ; ++i)
-//        connect(m_processador.nucleos().at(i), SIGNAL(processamentoTerminado()), &l_loop, SLOT(quit()));
+//        connect(m_processador.nucleos().at(i), &Nucleo::processamentoTerminado, &l_loop, &QEventLoop::quit);
 
 //    Nucleo* l_nucleo = NULL;
 
 //    int l_quantum = (ui->edtQuantum->value() - 1) * 1000;
 
-//    {
-//        QTimer* l_timer;
-//        while (!m_filaAptos.isEmpty()) {
-//            l_nucleo = m_processador.getNucleoDisponivel();
+//    QTimer* l_timer;
+//    while (!m_filaAptos.isEmpty()) {
+//        l_nucleo = m_processador.getNucleoDisponivel();
 
-//            if (!l_nucleo) {
-//                l_loop.exec();
-//                continue;
+//        if (!l_nucleo) {
+//            l_loop.exec();
+//            continue;
+//        }
+
+//        Processo* l_processo = m_filaAptos.takeFirst();
+
+//        l_timer = new QTimer(this);
+//        l_timer->setSingleShot(true);
+
+//        l_nucleo->setProcesso(l_processo);
+////        connect(l_nucleo->processo(), SIGNAL(tempoRestanteChanged(qint32)), SLOT(refreshUiNucleo()));
+
+//        ui->scrAptosContents->layout()->removeWidget(m_widgetsProcesso[l_processo->id()]);
+
+//        m_widgetsProcesso[l_processo->id()]->setProcesso(l_processo);
+//        m_widgetsNucleo[l_nucleo->id()]->setWdgProcesso(m_widgetsProcesso[l_processo->id()]);
+
+//        m_widgetsProcesso[l_processo->id()]->hide();
+//        l_nucleo->start();
+//        l_timer->start(l_quantum);
+
+//        connect(l_timer, &QTimer::timeout, [=](){
+//            m_widgetsProcesso[l_processo->id()]->show();
+//            ui->scrAptosContents->layout()->addWidget(m_widgetsProcesso[l_processo->id()]);
+
+//            if (l_nucleo->processo()->tempoRestante() > 0) {
+//                m_filaAptos.adicionarProcesso(l_nucleo->processo());
+//            } else {
+//                m_widgetsProcesso[l_processo->id()]->hide();
+//                ui->scrNucleosContents->layout()->removeWidget(m_widgetsProcesso[l_processo->id()]);
 //            }
 
-//            Processo* l_processo = m_filaAptos.takeFirst();
-//            l_timer = new QTimer(this);
-//            l_timer->setSingleShot(true);
-
-//            l_nucleo->setProcesso(l_processo);
-//            connect(l_nucleo->processo(), SIGNAL(tempoRestanteChanged(qint32)), SLOT(refreshUiNucleo()));
-
-//            ui->scrAptosContents->layout()->removeWidget(m_widgetsProcesso[l_processo->id()]);
-//            m_widgetsNucleo[l_nucleo->id()]->setProcesso(m_widgetsProcesso[l_processo->id()]);
-//            m_widgetsProcesso[l_processo->id()]->hide();
-//            l_nucleo->start();
-//            l_timer->start(l_quantum);
-
-//            connect(l_timer, &QTimer::timeout, [=](){
-//                m_widgetsProcesso[l_processo->id()]->show();
-//                ui->scrAptosContents->layout()->addWidget(m_widgetsProcesso[l_processo->id()]);
-
-//                if (l_nucleo->processo()->tempoRestante() > 0) {
-//                    m_filaAptos.adicionarProcesso(l_nucleo->processo());
-//                } else {
-//                    m_widgetsProcesso[l_processo->id()]->hide();
-//                    ui->scrNucleosContents->layout()->removeWidget(m_widgetsProcesso[l_processo->id()]);
-//                }
-
-//                l_nucleo->interromperProcessamento();
-//            });
-
-//        }
+//            l_nucleo->setStop(true);
+//        });
 //    }
 
 //    while (!m_filaAptos.isEmpty()) {
@@ -135,14 +142,14 @@ void MainWindow::initEscalonador()
 //        connect(l_nucleo->processo(), SIGNAL(tempoRestanteChanged(qint32)), SLOT(refreshUiNucleo()));
 
 //        ui->scrAptosContents->layout()->removeWidget(m_widgetsProcesso[l_processo->id()]);
-//        m_widgetsNucleo[l_nucleo->id()]->setProcesso(m_widgetsProcesso[l_processo->id()]);
+//        m_widgetsNucleo[l_nucleo->id()]->setWdgProcesso(m_widgetsProcesso[l_processo->id()]);
 //        m_widgetsProcesso[l_processo->id()]->hide();
 
 //        l_nucleo->start();
 //    }
 
 //    while (!m_processador.isOcioso())
-    //        l_loop.exec();
+//        l_loop.exec();
 }
 
 void MainWindow::on_edtNucleos_valueChanged(int i)

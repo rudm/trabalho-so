@@ -11,7 +11,7 @@ Processo::Processo(qint64 a_id, qint32 a_tempoTotal, qint32 a_tempoRestante, Pro
 
 }
 
-qint64 Processo::getId() const
+qint64 Processo::id() const
 {
     return m_id;
 }
@@ -21,7 +21,7 @@ void Processo::setId(const qint64 &value)
     m_id = value;
 }
 
-qint32 Processo::getTempoTotal() const
+qint32 Processo::tempoTotal() const
 {
     return m_tempoTotal;
 }
@@ -31,7 +31,7 @@ void Processo::setTempoTotal(const qint32 &value)
     m_tempoTotal = value;
 }
 
-Processo::Status Processo::getStatus() const
+Processo::Status Processo::status() const
 {
     return m_status;
 }
@@ -41,7 +41,7 @@ void Processo::setStatus(const Status &value)
     m_status = value;
 }
 
-qint32 Processo::getTempoRestante() const
+qint32 Processo::tempoRestante() const
 {
     return m_tempoRestante;
 }
